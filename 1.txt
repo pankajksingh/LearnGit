@@ -1,2 +1,3 @@
 Adding file to the repository
-Just a test file
+Just a test file getting updated
+Checking hash at commit
