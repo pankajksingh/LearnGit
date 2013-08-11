@@ -8,7 +8,7 @@ rm(list=ls())
 
 ###################################################
 ### Part 1
-### Load Library
+### Load Library add to depot
 ###################################################
 library(e1071,lib.loc = "c:/work/R/Lib")
 library(mlbench,lib.loc = "c:/work/R/Lib")
