@@ -8,7 +8,7 @@ Z float,
 Device smallint
 );
 
-
+#import data
 LOAD DATA LOCAL INFILE 'C:/Tree/GitHub/Test/LearnGit/train.csv' 
 INTO TABLE accel 
 FIELDS TERMINATED BY ',' 
@@ -20,8 +20,11 @@ IGNORE 1 LINES;
 set T =  DATE_ADD('1970-01-01 00:00:00',INTERVAL 1000*@T MICROSECOND);
 */
 
+
+#query top rows
 select * from accel LIMIT 1,2;
 
+#time operations
 SELECT FROM_UNIXTIME('1336645068531');
 SELECT DATE_ADD('1970-01-01 00:00:00',INTERVAL 1336645068531000 MICROSECOND);
 
