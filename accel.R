@@ -8,6 +8,7 @@ library(zoo,lib.loc="c:/work/R/Lib")
 ##install.packages("RMySQL",type='source',lib="c:/work/R/Lib")
 library(DBI,lib.loc="c:/work/R/Lib")
 library(RMySQL,lib.loc="c:/work/R/Lib")
+#Following is not needed as source installation will do the job
 #Rcmd.bat INSTALL RMySQL.whatever.tar.gz 
 ##http://stackoverflow.com/questions/4785933/adding-rmysql-package-to-r-fails
 library(cluster,lib.loc="c:/work/R/Lib") 
@@ -21,9 +22,10 @@ mySql.con<-dbConnect(mySql.driver,user='root',password='#bugsfor$',host='localho
 result<-dbSendQuery(mySql.con, "select * from accel where device=7")
 accel.df<- fetch(result, n = -1)
 
+
 #pick subset of rows and ignore time/device dimension
 cluster.count=3
-accel <- accel.df[100:200,2:4]
+accel <- accel.df[,2:4]
 fit <- kmeans(accel, cluster.count)
 
 # Cluster Plot against 1st 2 principal components
@@ -31,6 +33,17 @@ clusplot(accel, fit$cluster, color=TRUE, shade=TRUE,labels=2, lines=0)
 
 # Centroid Plot against 1st 2 discriminant functions
 plotcluster(accel, fit$cluster) 
+
+
+# Ward Hierarchical Clustering
+#if you get 'negative length vectors are not allowed', reduce number of rows
+d <- dist(accel, method = "euclidean") # distance matrix
+fit <- hclust(d, method="ward") 
+plot(fit) # display dendogram
+groups <- cutree(fit, k=cluster.count) # cut tree into clusters
+# draw dendogram with red borders around the clusters 
+rect.hclust(fit, k=cluster.count, border="red")
+
 
 #Plot time-series
 plot.seq <- function(start,end){
