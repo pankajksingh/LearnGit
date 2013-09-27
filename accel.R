@@ -1,3 +1,5 @@
+##Issue1: How to read contents from file(too big)
+##Issue2: clustering fails on large number of rows- can we reduce rows? sequences? 
 ##net start mysql56
 
 #Initialize
@@ -25,24 +27,45 @@ accel.df<- fetch(result, n = -1)
 
 #pick subset of rows and ignore time/device dimension
 cluster.count=3
-accel <- accel.df[,2:4]
+accel <- accel.df[100:500,2:4]
 fit <- kmeans(accel, cluster.count)
+device.clust.sign <- c(length(fit$cluster[fit$cluster==1]),length(fit$cluster[fit$cluster==2]),length(fit$cluster[fit$cluster==3]))
+device.clust.sign
+
 
 # Cluster Plot against 1st 2 principal components
-clusplot(accel, fit$cluster, color=TRUE, shade=TRUE,labels=2, lines=0)
+#clusplot(accel, fit$cluster, color=TRUE, shade=TRUE,labels=2, lines=0)
 
 # Centroid Plot against 1st 2 discriminant functions
-plotcluster(accel, fit$cluster) 
+plotcluster(accel, fit$cluster,main="device") 
+#Can we find sequences from the initial data?
 
 
 # Ward Hierarchical Clustering
 #if you get 'negative length vectors are not allowed', reduce number of rows
 d <- dist(accel, method = "euclidean") # distance matrix
-fit <- hclust(d, method="ward") 
-plot(fit) # display dendogram
-groups <- cutree(fit, k=cluster.count) # cut tree into clusters
+fit.h <- hclust(d, method="ward") 
+plot(fit.h) # display dendogram
+groups <- cutree(fit.h, k=cluster.count) # cut tree into clusters
 # draw dendogram with red borders around the clusters 
-rect.hclust(fit, k=cluster.count, border="red")
+rect.hclust(fit.h, k=cluster.count, border="red")
+
+
+#Find sign of sequences
+#Few sequence ids={100006,100011,100012}
+result.test<-dbSendQuery(mySql.con, "select * from acceltest where sequenceid=100012")
+accel.df.test <- fetch(result.test, n = -1)
+
+fit.test <- kmeans(accel.df.test, cluster.count)
+seq.cluster <- fit.test$cluster;
+sequence.clust.sign <- c(length(seq.cluster[seq.cluster==1]),length(seq.cluster[seq.cluster==2]),length(seq.cluster[seq.cluster==3]))
+sequence.clust.sign
+#TODO: Can we compare mean of 1(sequence) from mean of 1(device) ?
+
+# Centroid Plot against 1st 2 discriminant functions
+plotcluster(accel.df.test, seq.cluster,main="sequence") 
+
+
 
 
 #Plot time-series
