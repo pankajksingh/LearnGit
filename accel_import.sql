@@ -19,6 +19,9 @@ select distinct device from accel;
 -- Number of rows=
 --  {7,8,9,12}
 
+select count(*) from accel where device=7;
+-- 523187 rows
+
 #Test data
 drop table acceltest;
 create table acceltest(
@@ -41,6 +44,8 @@ select distinct SequenceId from acceltest;
 -- Number of ids=1000
 -- {100006,100011,100012}
 
+select count(*) from acceltest where sequenceid=100006;
+-- 300
 
 /*
 (@T, X, Y,Z,Device)
